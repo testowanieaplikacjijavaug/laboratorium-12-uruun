@@ -98,7 +98,7 @@ public class AddressBookTest {
                 () -> assertThat(addr1.get(0).getText()).isEqualTo("name"),
                 () -> assertThat(addr1.get(1).getText()).isEqualTo("surname"),
                 () -> assertThat(addr1.get(2).getText()).isEqualTo("city"),
-                () -> assertThat(addr1.get(3).getText()).isEqualTo("AL"),
+                () -> assertThat(addr1.get(3).getText()).isEqualTo("AL")
         );
     }
 
