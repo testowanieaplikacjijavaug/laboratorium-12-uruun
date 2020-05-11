@@ -1,34 +1,33 @@
 package laboratorium.uruun;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.List;
+
 public class LoginPage {
-    public WebDriver driver;
 
-    @FindBy(id = "search_button_homepage")
-    private WebElement searchSubmit;
+    private WebElement login;
+    private WebElement password;
 
-    @FindBy(id = "search_form_input_homepage")
-    private WebElement searchInput;
+    @FindAll({
+            @FindBy(className = "error"),
+            @FindBy(id = "login-error-message")
+    })
+    protected List<WebElement> error;
 
-    @FindBy(id = "not existing id")
-    private WebElement notExisting;
-
-    public LoginPage(WebDriver driver) {
-        this.driver = driver;
+    public void login(String username, String pass)
+    {
+        login.sendKeys(username);
+        password.sendKeys(pass);
+        password.sendKeys(Keys.ENTER);
     }
 
-    public void search(String text) throws InterruptedException {
-        searchInput.sendKeys(text);
-        searchSubmit.click();
-        Thread.sleep(1000);
+    public boolean getError()
+    {
+        return error.size() > 0;
     }
-
-    public String getTitle() {
-        return driver.getTitle();
-    }
-
-
 }
