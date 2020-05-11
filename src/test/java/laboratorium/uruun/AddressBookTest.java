@@ -49,7 +49,7 @@ public class AddressBookTest {
     @Test
     public void testSignout() {
         addressBook.signout();
-        assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/");
+        assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/sign_in");
     }
 
     @Test
