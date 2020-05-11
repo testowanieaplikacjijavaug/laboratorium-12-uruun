@@ -17,23 +17,19 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AddressBookTest {
     private static WebDriver driver;
     private AddressBook addressBook;
+    private static FirefoxOptions options;
 
     @BeforeAll
     public static void setUpDriver() {
         WebDriverManager.firefoxdriver().setup();
-        FirefoxOptions options = new FirefoxOptions();
+        options = new FirefoxOptions();
         options.setHeadless(true);
-        driver = new FirefoxDriver(options);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        driver.quit();
     }
 
     @BeforeEach
-    public void setUp() throws InterruptedException {
+    public void setup() throws InterruptedException {
+        driver = new FirefoxDriver(options);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         addressBook = PageFactory.initElements(driver, AddressBook.class);
         addressBook.login();
     }
@@ -42,17 +38,22 @@ public class AddressBookTest {
     public void teardown() throws InterruptedException {
         addressBook.destroyAddresses();
         addressBook.signout();
+        driver.quit();
     }
 
     @Test
-    @Disabled
-    public void testLogin() throws InterruptedException {
+    public void testLogin() {
         assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/");
     }
 
     @Test
-    @Disabled
-    public void testEmptyAddressesPage() throws InterruptedException {
+    public void testSignout() {
+        addressBook.signout();
+        assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/");
+    }
+
+    @Test
+    public void testEmptyAddressesPage() {
         addressBook.clickAddresses();
         assertAll(
                 () -> assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/addresses"),
@@ -61,35 +62,56 @@ public class AddressBookTest {
     }
 
     @Test
-    @Disabled
-    public void testCreateAddress() {
+    public void testCreateAddresses() {
+        addressBook.clickAddresses();
         addressBook.newAddressLink().click();
         addressBook.fillAddress("name", "surname", "address 1", "address 2", "city", "zip");
         addressBook.confirmAddress();
         addressBook.clickAddresses();
-        List<WebElement> addr = addressBook.getAddress(0);
+        addressBook.newAddressLink().click();
+        addressBook.fillAddress("name2", "surname2", "address 1", "address 2", "city2", "zip");
+        addressBook.confirmAddress();
+        addressBook.clickAddresses();
+        List<WebElement> addr1 = addressBook.getAddress(1);
+        List<WebElement> addr2 = addressBook.getAddress(2);
         assertAll(
-                () -> assertThat(addr.get(0).getText()).isEqualTo("name"),
-                () -> assertThat(addr.get(1).getText()).isEqualTo("surname"),
-                () -> assertThat(addr.get(2).getText()).isEqualTo("city"),
-                () -> assertThat(addr.get(3).getText()).isEqualTo("AL")
+                () -> assertThat(addr1.get(0).getText()).isEqualTo("name"),
+                () -> assertThat(addr1.get(1).getText()).isEqualTo("surname"),
+                () -> assertThat(addr1.get(2).getText()).isEqualTo("city"),
+                () -> assertThat(addr1.get(3).getText()).isEqualTo("AL"),
+                () -> assertThat(addr2.get(0).getText()).isEqualTo("name2"),
+                () -> assertThat(addr2.get(1).getText()).isEqualTo("surname2"),
+                () -> assertThat(addr2.get(2).getText()).isEqualTo("city2"),
+                () -> assertThat(addr2.get(3).getText()).isEqualTo("AL")
         );
     }
 
     @Test
-    @Disabled
-    public void testCreateAddressShow() {
+    public void testCreateAddressShow() throws InterruptedException {
+        addressBook.clickAddresses();
         addressBook.newAddressLink().click();
         addressBook.fillAddress("name", "surname", "address 1", "address 2", "city", "zip");
         addressBook.confirmAddress();
         addressBook.clickAddresses();
-        List<WebElement> addr = addressBook.getAddress(0);
+        addressBook.showAddress(1);
+        List<WebElement> info = addressBook.addressInfo();
         assertAll(
-                () -> assertThat(addr.get(0).getText()).isEqualTo("name"),
-                () -> assertThat(addr.get(1).getText()).isEqualTo("surname"),
-                () -> assertThat(addr.get(2).getText()).isEqualTo("city"),
-                () -> assertThat(addr.get(3).getText()).isEqualTo("AL")
+                () -> assertThat(info.get(0).getText()).isEqualTo("name"),
+                () -> assertThat(info.get(1).getText()).isEqualTo("surname"),
+                () -> assertThat(info.get(2).getText()).isEqualTo("address 1"),
+                () -> assertThat(info.get(3).getText()).isEqualTo("address 2"),
+                () -> assertThat(info.get(4).getText()).isEqualTo("city"),
+                () -> assertThat(info.get(5).getText()).isEqualTo("zip")
         );
     }
 
+    @Test
+    public void testComeBackFromAddress() {
+        addressBook.clickAddresses();
+        addressBook.newAddressLink().click();
+        addressBook.fillAddress("name", "surname", "address 1", "address 2", "city", "zip");
+        addressBook.confirmAddress();
+        addressBook.clickAddressList();
+        assertThat(addressBook.getURL()).isEqualTo("http://a.testaddressbook.com/addresses");
+    }
 }

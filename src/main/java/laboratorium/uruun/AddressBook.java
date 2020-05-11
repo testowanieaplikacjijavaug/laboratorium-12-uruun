@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,8 +13,6 @@ public class AddressBook {
     public WebDriver driver;
     private final String email = "chepuhodoc@wemel.site";
     private final String password = "testpass";
-
-
 
     public AddressBook(WebDriver driver) {
         this.driver = driver;
@@ -36,7 +33,11 @@ public class AddressBook {
     }
 
     public void signout() {
-        signOut().click();
+        try {
+            signOut().click();
+        } catch (Exception ignored) {
+
+        }
     }
 
     public void clickAddresses() {
@@ -68,16 +69,32 @@ public class AddressBook {
         clickAddresses();
         WebElement destroy;
         while (!driver.findElements(By.linkText("Destroy")).isEmpty()) {
-            destroy = driver.findElement(By.linkText("Destroy"));
-            destroy.click();
-            System.out.println(driver.switchTo().alert().getText());
-            driver.switchTo().alert().accept();
-            Thread.sleep(1000);
+            try {
+                destroy = driver.findElement(By.linkText("Destroy"));
+                destroy.click();
+                driver.switchTo().alert().accept();
+                Thread.sleep(500);
+            } catch (Exception e) {
+                break;
+            }
         }
+    }
+
+    public void showAddress(int index) throws InterruptedException {
+        getAddress(index).get(4).click();
+        Thread.sleep(500);
+    }
+
+    public List<WebElement> addressInfo() {
+        return driver.findElements(By.xpath("/html/body/div/p/span[2]"));
     }
 
     public List<WebElement> getAddress(int id) {
         return driver.findElement(By.xpath("/html/body/div/table/tbody/tr["+id+"]")).findElements(By.cssSelector("*"));
+    }
+
+    public void clickAddressList() {
+        driver.findElement(By.linkText("List")).click();
     }
 
     private WebElement emailInput() {
