@@ -93,15 +93,12 @@ public class AddressBookTest {
         addressBook.fillAddress("name", "surname", "address 1", "address 2", "city", "zip");
         addressBook.confirmAddress();
         addressBook.clickAddresses();
-        addressBook.showAddress(1);
-        List<WebElement> info = addressBook.addressInfo();
+        List<WebElement> addr1 = addressBook.getAddress(1);
         assertAll(
-                () -> assertThat(info.get(0).getText()).isEqualTo("name"),
-                () -> assertThat(info.get(1).getText()).isEqualTo("surname"),
-                () -> assertThat(info.get(2).getText()).isEqualTo("address 1"),
-                () -> assertThat(info.get(3).getText()).isEqualTo("address 2"),
-                () -> assertThat(info.get(4).getText()).isEqualTo("city"),
-                () -> assertThat(info.get(5).getText()).isEqualTo("zip")
+                () -> assertThat(addr1.get(0).getText()).isEqualTo("name"),
+                () -> assertThat(addr1.get(1).getText()).isEqualTo("surname"),
+                () -> assertThat(addr1.get(2).getText()).isEqualTo("city"),
+                () -> assertThat(addr1.get(3).getText()).isEqualTo("AL"),
         );
     }
 
