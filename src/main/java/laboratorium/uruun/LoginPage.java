@@ -2,9 +2,7 @@ package laboratorium.uruun;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.FindBys;
 
 public class LoginPage {
     public WebDriver driver;
@@ -18,9 +16,8 @@ public class LoginPage {
     @FindBy(id = "not existing id")
     private WebElement notExisting;
 
-    public LoginPage(WebDriver driver, String url) {
+    public LoginPage(WebDriver driver) {
         this.driver = driver;
-        driver.get(url);
     }
 
     public void search(String text) throws InterruptedException {
